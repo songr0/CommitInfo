@@ -1,0 +1,74 @@
+body{
+    margin-left: 5vw;
+    margin-right: 5vw;
+}
+
+.show{
+    display: inline-block;
+}
+
+.hide-chart{
+    display: none;
+}
+
+#hint{
+    float: left;
+    width: 100%;
+    text-align: center;
+    color: gray;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-head button{
+    display: inline;
+    float: right;
+    width: 29vw;
+    height: 60px;
+    background-color: white;
+    border: 1px lightgray solid;
+}
+
+.tab-head button:hover{
+    color: darkturquoise;
+    border: 1px darkturquoise solid;
+}
+
+.tab-content{
+    float: left;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.charts{
+    float: left;
+    display: inline;
+    /*width: 60%;*/
+}
+
+.charts>div{
+    margin-left: 4vw;
+    width: 55vw;
+    height: 70vh;
+}
+
+#float-right{
+    float: right;
+    width: 20vw;
+    border: 1px lightgray solid;
+    margin: 15px 0 15px 15px;
+    padding: 15px;
+    /*height: calc(70vh - 30px);*/
+}
+
+.controlPara{
+    display: block;
+    margin-bottom: 20px;
+    height: 28px;
+    width: 15vw;
+}
+
+.float-right-title{
+    font-size: 1vw;
+    margin-bottom: 10px;
+}
