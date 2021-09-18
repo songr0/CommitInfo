@@ -114,12 +114,13 @@ function getCommitInfoData(){
 function csvToObject(csvString){
     var csvarry = csvString.split("\r\n");
     var datas = [];
-    for(var i = 1;i<csvarry.length;i++){
+    for(var i = 0;i<csvarry.length-1;i++){
         var data = [];
         var temp = csvarry[i].split(",");
         for(var j = 0;j<temp.length;j++){
             data[j] = parseFloat(temp[j]);
         }
+        data[2] = (data[2]+1.5)*0.45;
         datas.push(data);
     }
     return datas;
@@ -165,15 +166,30 @@ function loadChart(type, infoCategory, name, granularity, committerType){
     echarts.init(chart).dispose();
     let myChart = echarts.init(chart);
     var option;
-    console.log(sourceData);
+    // console.log(sourceData);
     option = {
-        title: {
-            text: 'method and class change distribution',
-            subtext: 'Data from: Heinz 2003'
-        },
+        title: [{
+            text: "方法变更显著性",
+            left: "435px",
+            top:20,
+            textStyle: {
+                color: "#999",
+                fontSize: 12,
+                fontWeight: '400'
+            }
+        }, {
+            text: "方法重要性",
+            right: "80px",
+            top: 315,
+            textStyle: {
+                color: "#999",
+                fontSize: 12,
+                fontWeight: '400'
+            }
+        }],
         grid: {
             left: '3%',
-            right: '7%',
+            right: '15%',
             bottom: '7%',
             containLabel: true
         },
@@ -192,22 +208,34 @@ function loadChart(type, infoCategory, name, granularity, committerType){
                 type: 'cross',
                 lineStyle: {
                     type: 'dashed',
-                    width: 1
+                    width: 4
                 }
             }
         },
-        toolbox: {
-            feature: {
-                dataZoom: {},
-                brush: {
-                    type: ['rect', 'polygon', 'clear']
-                }
-            }
+        visualMap: {
+            min: 20140101,
+            max: 20210930,
+            calculable: true,
+            itemHeight:500,
+            color:['#A12719','#FFFBFC'],
+            orient: 'vertical',
+            right: '10',
+            splitNumber: 8,
+            seriesIndex:1,
+            top: 'center'
         },
-        brush: {
-        },
+        // toolbox: {
+        //     feature: {
+        //         dataZoom: {},
+        //         brush: {
+        //             type: ['rect', 'polygon', 'clear']
+        //         }
+        //     }
+        // },
+        // brush: {
+        // },
         legend: {
-            data: ['A', 'B'],
+            data: ['Developer Behavior'],
             left: 'center',
             bottom: 10
         },
@@ -219,8 +247,20 @@ function loadChart(type, infoCategory, name, granularity, committerType){
                     formatter: '{value}'
                 },
                 splitLine: {
-                    show: false
-                }
+                    show: true,
+                    lineStyle: {
+                        color: ['gray'],
+                        width: 0.1,
+                        type: 'solid'
+                    }
+                },
+                axisLine:{
+                    lineStyle:{
+                        width: 3
+                    }
+                },
+                min: -1,
+                max: 1
             }
         ],
         yAxis: [
@@ -231,27 +271,44 @@ function loadChart(type, infoCategory, name, granularity, committerType){
                     formatter: '{value}'
                 },
                 splitLine: {
-                    show: false
-                }
+                    show: true,
+                    lineStyle: {
+                        color: ['gray'],
+                        width: 0.1,
+                        type: 'solid'
+                    }
+                },
+                axisLine:{
+                  lineStyle:{
+                      width: 3
+                  }
+                },
+                min: -1,
+                max: 1
             }
         ],
         series: [
             {
-                name: 'A',
+                name: 'Developer Behavior',
                 type: 'scatter',
                 emphasis: {
                     focus: 'series'
                 },
+                blendMode: 'source-over',
                 data: sourceData,
+                dimensions: ['x', 'y'],
                 markArea: {
                     silent: true,
                     itemStyle: {
                         color: 'transparent',
-                        borderWidth: 1,
-                        borderType: 'dashed'
+                        borderWidth: 0,
+                        borderType: 'dashed',
+                        itemStyle: {
+                            opacity: 0.5
+                        }
                     },
                     data: [[{
-                        name: 'A Data Range',
+                        name: '',
                         xAxis: 'min',
                         yAxis: 'min'
                     }, {
@@ -259,63 +316,79 @@ function loadChart(type, infoCategory, name, granularity, committerType){
                         yAxis: 'max'
                     }]]
                 },
-                markPoint: {
-                    data: [
-                        {type: 'max', name: 'Max'},
-                        {type: 'min', name: 'Min'}
-                    ]
-                },
-                markLine: {
-                    lineStyle: {
-                        type: 'solid'
-                    },
-                    data: [
-                        {type: 'average', name: '平均值'},
-                        { xAxis: 160 }
-                    ]
-                },
-                symbolSize: 5
-            },
-            {
-                name: 'B',
-                type: 'scatter',
-                emphasis: {
-                    focus: 'series'
-                },
-                data: sourceData2,
-                markArea: {
-                    silent: true,
-                    itemStyle: {
-                        color: 'transparent',
-                        borderWidth: 1,
-                        borderType: 'dashed'
-                    },
-                    data: [[{
-                        name: 'B Data Range',
-                        xAxis: 'min',
-                        yAxis: 'min'
-                    }, {
-                        xAxis: 'max',
-                        yAxis: 'max'
-                    }]]
-                },
-                markPoint: {
-                    data: [
-                        {type: 'max', name: 'Max'},
-                        {type: 'min', name: 'Min'}
-                    ]
-                },
-                markLine: {
-                    lineStyle: {
-                        type: 'solid'
-                    },
-                    data: [
-                        {type: 'average', name: 'Average'},
-                        { xAxis: 170 }
-                    ]
-                },
-                symbolSize: 5
+                // markPoint: {
+                //     data: [
+                //         {type: 'max', name: 'Max'},
+                //         {type: 'min', name: 'Min'}
+                //     ]
+                // },
+                // markLine: {
+                //     lineStyle: {
+                //         type: 'solid'
+                //     },
+                //     data: [
+                //         {type: 'average', name: '平均值'},
+                //         { xAxis: 160 }
+                //     ]
+                // },
+                symbolSize: 9,
+                itemStyle: {
+                    color: function(e){
+                        // console.log(e)
+                        return 'rgb(161,39,25,'+e.value[2]+')';
+                    }
+                }
             }
+            // {
+            //     name: 'Developer2',
+            //     type: 'scatter',
+            //     emphasis: {
+            //         focus: 'series'
+            //     },
+            //     blendMode: 'source-over',
+            //     data: sourceData2,
+            //     dimensions: ['x', 'y'],
+            //     markArea: {
+            //         silent: true,
+            //         itemStyle: {
+            //             color: 'transparent',
+            //             borderWidth: 0,
+            //             borderType: 'dashed',
+            //             itemStyle: {
+            //                 opacity: 0.5
+            //             }
+            //         },
+            //         data: [[{
+            //             name: '',
+            //             xAxis: 'min',
+            //             yAxis: 'min'
+            //         }, {
+            //             xAxis: 'max',
+            //             yAxis: 'max'
+            //         }]]
+            //     },
+            //     // markPoint: {
+            //     //     data: [
+            //     //         {type: 'max', name: 'Max'},
+            //     //         {type: 'min', name: 'Min'}
+            //     //     ]
+            //     // },
+            //     // markLine: {
+            //     //     lineStyle: {
+            //     //         type: 'solid'
+            //     //     },
+            //     //     data: [
+            //     //         {type: 'average', name: '平均值'},
+            //     //         { xAxis: 160 }
+            //     //     ]
+            //     // },
+            //     symbolSize: 10,
+            //     itemStyle: {
+            //         color: function(e){
+            //             return 'rgb(98,187,193,'+e.value[2]+')';
+            //         }
+            //     },
+            // }
         ]
     };
 
@@ -427,12 +500,17 @@ function loadChart2(type, infoCategory, data , committerType) {
                     fontSize: 12
                 }
             },
-            data: xAxis
+            data: xAxis,
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['gray'],
+                    width: 2,
+                    type: 'solid'
+                }
+            }
         }],
         yAxis: [{
-            splitLine: {
-                show: false
-            },
             axisTick: {
                 show: false
             },
@@ -446,6 +524,14 @@ function loadChart2(type, infoCategory, data , committerType) {
                 formatter: '{value}',
                 textStyle: {
                     fontSize: 12
+                }
+            },
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['gray'],
+                    width: 2,
+                    type: 'solid'
                 }
             },
             type: 'value'
